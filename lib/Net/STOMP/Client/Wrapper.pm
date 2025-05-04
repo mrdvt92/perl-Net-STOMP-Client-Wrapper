@@ -10,34 +10,52 @@ our $VERSION = '0.03';
 
 =head1 NAME
 
-Net::STOMP::Client::Wrapper - Stomp Client and Management API wrapper
+Net::STOMP::Client::Wrapper - Stomp Client and RabbitMQ Management API wrapper
 
 =head1 SYNOPSIS
 
 Producer
 
   use Net::STOMP::Client::Wrapper;
-  my $wrapper = Net::STOMP::Client::Wrapper->new;                          #ISA Net::STOMP::Client::Wrapper
-  my $stomp   = $wrapper->stomp_connect;                                   #ISA Net::STOMP::Client connected
-  $stomp->send(destination => "/queue/my_queue", body => "my_payload");
+  my $wrapper = Net::STOMP::Client::Wrapper->new(queue_name=>"my_queue");   #ISA Net::STOMP::Client::Wrapper
+  my $stomp   = $wrapper->stomp_connect;                                    #ISA Net::STOMP::Client connected
+  $wrapper->send(body=>"my_payload");
 
 Consumer
 
   use Net::STOMP::Client::Wrapper;
-  my $wrapper = Net::STOMP::Client::Wrapper->new(queue_name=>"my_queue");  #ISA Net::STOMP::Client::Wrapper
-  my $stomp   = $wrapper->stomp_connect;                                   #ISA Net::STOMP::Client subscribed to queue
+  my $wrapper = Net::STOMP::Client::Wrapper->new(queue_name=>"my_queue");   #ISA Net::STOMP::Client::Wrapper
+  my $stomp   = $wrapper->stomp_connect_subscribe;                          #ISA Net::STOMP::Client subscribed to queue
   $stomp->wait_for_frames(callback => \&queue_callback);
 
 Monitor
 
   use Net::STOMP::Client::Wrapper;
-  my $wrapper  = Net::STOMP::Client::Wrapper->new(queue_name=>"my_queue"); #ISA Net::STOMP::Client::Wrapper
-  my $result   = $wrapper->management_api_get_queue;                       #ISA Net::RabbitMQ::Management::API::Result
-  my $content  = $result->content;                                         #ISA HASH
+  my $wrapper   =  Net::STOMP::Client::Wrapper->new(queue_name=>"my_queue"); #ISA Net::STOMP::Client::Wrapper
+  my $result    = $wrapper->management_api_get_queue;                       #ISA Net::RabbitMQ::Management::API::Result
+  my $content   = $result->content;                                         #ISA HASH
+  my $consumers = $content->{'consumers'} || 0;
+  my $messages  = $content->{'messages'}  || 0;
+  printf "Consumers: %s, Messages: %s\n", $consumers, $messages;
+
+Super Class
+
+  package My::Wrapper;
+  use base qw{Net::STOMP::Client::Wrapper};
+  sub host {"my_host"};
+  sub queue_name {"my_queue"};
 
 =head1 DESCRIPTION
 
-Net::STOMP::Client::Wrapper of L<Net::STOMP::Client> and L<Net::RabbitMQ::Management::API> with sane defaults and INI configuration
+Net::STOMP::Client::Wrapper is a wrapper of L<Net::STOMP::Client> and L<Net::RabbitMQ::Management::API> with sane defaults.
+
+This package is a wrapper for my typical use case which is a single RabbitMQ server with the Stomp and Management API plugins enabled and a single queue_name.
+
+  sudo yum install rabbitmq-server
+  sudo /usr/lib/rabbitmq/bin/rabbitmq-plugins enable rabbitmq_stomp
+  sudo /usr/lib/rabbitmq/bin/rabbitmq-plugins enable rabbitmq_management
+  sudo systemctl enable rabbitmq-server
+  sudo systemctl start rabbitmq-server
 
 =head1 Properties
 
@@ -116,8 +134,6 @@ Returns the short queue_name or the formatted destination.
   my $queue_name  = $wrapper->queue_name;
   my $destination = $wrapper->destination; #ISA string formatted as "/queue/{queue_name}"
 
-Note: If queue_name is not set, the client will connect but not subscribe to a queue so that this library can be use for sending messages as well and subscribing.
-
 Default: ''
 
 =cut
@@ -195,6 +211,8 @@ Wrapper around `stomp->send` with default destination
 
   $wrapper->send(body=>"my_string"); #destination is defaulted to $wrapper->destination;
   $wrapper->send(destination=>"/queue/another_queue", body=>"my_string");
+
+Note: stomp must be connected before calling send.
 
 =cut
 
