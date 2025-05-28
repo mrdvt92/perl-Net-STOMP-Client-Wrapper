@@ -240,7 +240,7 @@ sub management_api_get_queue {
 
 Returns a L<Net::STOMP::Client> object connection and subscribed to the configured queue
 
-  my $stomp = $wrapper->stomp_connect;
+  my $stomp = $wrapper->stomp_connect_subscribe;
 
 Limitations: Only Call once!
 
@@ -264,7 +264,7 @@ sub stomp_connect_subscribe {
 
 =head2 stomp_connect
 
-Returns a L<Net::STOMP::Client> object connection
+Returns a connected L<Net::STOMP::Client> object.
 
   my $stomp = $wrapper->stomp_connect;
 
@@ -280,6 +280,8 @@ sub stomp_connect {
 }
 
 =head2 stomp_disconnect
+
+Unsubscribes to any subscriptions and disconnects stomp client.
 
 =cut
 
@@ -297,7 +299,7 @@ sub stomp_disconnect {
 
 =head2 stomp
 
-Returns the L<Net::STOMP::Client> object
+Returns the cached L<Net::STOMP::Client> object
 
 =cut
 

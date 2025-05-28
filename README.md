@@ -116,13 +116,13 @@ Returns a [Net::RabbitMQ::Management::API::Result](https://metacpan.org/pod/Net%
 
 Returns a [Net::STOMP::Client](https://metacpan.org/pod/Net%3A%3ASTOMP%3A%3AClient) object connection and subscribed to the configured queue
 
-    my $stomp = $wrapper->stomp_connect;
+    my $stomp = $wrapper->stomp_connect_subscribe;
 
 Limitations: Only Call once!
 
 ## stomp\_connect
 
-Returns a [Net::STOMP::Client](https://metacpan.org/pod/Net%3A%3ASTOMP%3A%3AClient) object connection
+Returns a connected [Net::STOMP::Client](https://metacpan.org/pod/Net%3A%3ASTOMP%3A%3AClient) object.
 
     my $stomp = $wrapper->stomp_connect;
 
@@ -130,9 +130,11 @@ Limitations: Only Call once!
 
 ## stomp\_disconnect
 
+Unsubscribes to any subscriptions and disconnects stomp client.
+
 ## stomp
 
-Returns the [Net::STOMP::Client](https://metacpan.org/pod/Net%3A%3ASTOMP%3A%3AClient) object
+Returns the cached [Net::STOMP::Client](https://metacpan.org/pod/Net%3A%3ASTOMP%3A%3AClient) object
 
 ## management\_api
 
