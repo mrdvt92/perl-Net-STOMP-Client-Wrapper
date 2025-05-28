@@ -11,4 +11,21 @@ WriteMakefile(
     ABSTRACT_FROM     => 'lib/Net/STOMP/Client/Wrapper.pm',
     AUTHOR            => 'Michael R. Davis',
     LICENSE           => 'mit', #from https://metacpan.org/pod/Module::Build::API
+
+  'META_MERGE' => {
+    'resources' => {
+      'homepage' => 'https://github.com/mrdvt92/perl-Net-STOMP-Client-Wrapper',
+      'bugtracker' => {
+        'web' => 'https://github.com/mrdvt92/perl-Net-STOMP-Client-Wrapper/issues'
+      },
+      'repository' => {
+        'web' => 'https://github.com/mrdvt92/perl-Net-STOMP-Client-Wrapper.git',
+        'url' => 'git@github.com:mrdvt92/perl-Net-STOMP-Client-Wrapper.git',
+        'type' => 'git'
+      }
+    },
+    'meta-spec' => {
+      'version' => 2
+    }
+  },
 );
